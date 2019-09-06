@@ -1,1 +1,157 @@
-a
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTemplate
+metadata:
+  name: AlaudaGoBuild
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "AlaudaGoBuild"
+    alauda.io/displayName.en: "AlaudaGoBuild"
+    alauda.io/description.zh-CN: "ACP 2.X AlaudaGoBuild"
+    alauda.io/description.en: "ACP 2.X AlaudaGoBuild"
+    alauda.io/version: "1.8.3"
+    alauda.io/style.icon: golang,docker,sonarqube,kubernetes
+  labels:
+    category: Build
+spec:
+  engine: graph
+  withSCM: true
+  agent:
+    label: golang-1.12
+  stages:
+    - name: Clone
+      tasks:
+        - name: clone
+          kind: ClusterPipelineTaskTemplate
+          type: public/alauda-clone
+    - name: "Nodejs CI"
+      tasks:
+        - name: nodejs-build
+          kind: ClusterPipelineTaskTemplate
+          type: public/alauda-golang
+  arguments:
+    - displayName:
+        zh-CN: "代码检出"
+        en: "Clone"
+      items:
+        - name: "PlatformCodeRepository"
+          schema:
+            type: alauda.io/coderepositorymix
+          required: true
+          value: ""
+          binding:
+            - alauda-checkout-scm.args.PlatformCodeRepository
+            - alauda-git-tag.args.PlatformCodeRepository
+          display:
+            type: alauda.io/coderepositorymix
+            name:
+              zh-CN: "代码仓库"
+              en: Code Repository
+            description:
+              zh-CN: "选择已为项目分配的代码仓库"
+              en: ""
+        - name: "RelativeDirectory"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-checkout-scm.args.RelativeDirectory
+          default: "."
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "相对目录"
+              en: Relative Directory
+            description:
+              zh-CN: "在 Golang 程序为 GOPATH的子目录，例如 src/github.com/alauda/alauda。指定检出 Git 仓库的本地目录(相对于 workspace 根目录)。若为空，将使用 workspace 根目录"
+              en: "Used as the path in GOPATH, e.g src/github.com/alauda/alauda. Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
+        - name: "SharedLibrary"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-checkout-scm.args.Library
+          default: "alauda-cicd"
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "Jenkins Shared Library"
+              en: "Jenkins Shared Library"
+            description:
+              zh-CN: "Jenkins Shared Library. Add @<branch> at the end of the name for a specific branch"
+              en: "Jenkins Shared Library. Add @<branch> at the end of the name for a specific branch"
+    - displayName:
+        zh-CN: "Nodejs CI"
+        en: "Golang CI"
+      items:
+        - name: "UseGoModules"
+          schema:
+            type: boolean
+          binding:
+            - alauda-golang.args.supportGoModules
+          display:
+            type: boolean
+            name:
+              zh-CN: "使用 Go Modules"
+              en: "Use Go Modules"
+            description:
+              zh-CN: "使用 Go Modules"
+              en: "Use Go Modules"
+          required: false
+          value: "false"
+        - name: "buildCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-golang.args.buildCommand
+          display:
+            type: code
+            name:
+              zh-CN: "构建命令"
+              en: "Build Command"
+            description:
+              zh-CN: "make build"
+              en: ""
+          required: false
+          value: ""
+          default: 'make build'
+        - name: "compressCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-golang.args.compressCommand
+          display:
+            type: code
+            name:
+              zh-CN: "压缩程序命令"
+              en: "Compress Command"
+            description:
+              zh-CN: "压缩程序命令。例如 upx bin/my-program"
+              en: "Compress Command. i.e upx bin/my-program"
+          required: false
+          default: ''
+        - name: "GoProxy"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-golang.args.goProxy
+          default: "https://athens.acp.alauda.cn"
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "Go Proxy server"
+              en: "Go Proxy server"
+            description:
+              zh-CN: "Go Proxy server"
+              en: "Go Proxy server"
+          relation:
+            - action: show
+              when:
+                name: UseGoModules
+                value: true
