@@ -25,9 +25,9 @@ spec:
           type: public/alauda-clone
     - name: "Nodejs CI"
       tasks:
-        - name: nodejs-build
+        - name: nodejsBuild
           kind: ClusterPipelineTaskTemplate
-          type: public/alauda-golang
+          type: public/alauda-nodejsBuild
   arguments:
     - displayName:
         zh-CN: "代码检出"
