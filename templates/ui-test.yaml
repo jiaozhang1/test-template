@@ -25,7 +25,7 @@ spec:
           type: public/alauda-clone
     - name: "Nodejs CI"
       tasks:
-        - name: nodejsBuild
+        - name: nodejs-build
           kind: ClusterPipelineTaskTemplate
           type: public/alauda-nodejsBuild
   arguments:
