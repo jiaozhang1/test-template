@@ -12,7 +12,7 @@ metadata:
     alauda.io/version: "1.8.4"
     alauda.io/style.icon: ""
   labels:
-    category: CI
+    category: Nodejs
 spec:
   engine: gotpl
   body: |+
