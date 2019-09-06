@@ -9,7 +9,7 @@ metadata:
     alauda.io/description.en: Build a project
     alauda.io/readme.zh-CN: 构建程序
     alauda.io/readme.en: Build a project
-    alauda.io/version: "0.1.1"
+    alauda.io/version: "0.1.2"
     alauda.io/style.icon: ""
   labels:
     ategory: CI
