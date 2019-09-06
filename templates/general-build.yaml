@@ -1,0 +1,356 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: ClusterPipelineTemplate
+metadata:
+  name: GeneralBuild
+  annotations:
+    alauda.io/displayName.zh-CN: "构建应用"
+    alauda.io/displayName.en: "Build Application"
+    alauda.io/description.zh-CN: "克隆代码 -> 构建 -> Docker 构建"
+    alauda.io/description.en: "Clone -> Build -> Docker Build"
+    alauda.io/version: "0.1.3"
+    alauda.io/style.icon: docker,kubernetes,sonarqube
+  labels:
+    category: Build
+    source: customer
+spec:
+  engine: graph
+  withSCM: true
+  agent:
+    label: base
+  stages:
+    - name: Clone
+      tasks:
+        - name: clone
+          kind: ClusterPipelineTaskTemplate
+          type: public/clone
+    - name: Running
+      tasks:
+        - name: running
+          kind: ClusterPipelineTaskTemplate
+          type: public/running
+          relation:
+          - action: show
+            when:
+              name: UseContinuousCI
+              value: true
+    - name: "Code Scan"
+      tasks:
+        - name: sonar
+          kind: ClusterPipelineTaskTemplate
+          type: public/sonar
+          relation:
+            - action: show
+              when:
+                name: UseSonarQube
+                value: true
+    - name: Docker Build
+      tasks:
+        - name: build-docker
+          kind: ClusterPipelineTaskTemplate
+          type: public/build
+  arguments:
+    - displayName:
+        zh-CN: "代码检出"
+        en: "Clone"
+      items:
+        - name: "PlatformCodeRepository"
+          schema:
+            type: alauda.io/coderepositorymix
+          required: true
+          value: ""
+          binding:
+            - clone.args.PlatformCodeRepository
+            - sonar.args.PlatformCodeRepository
+          display:
+            type: alauda.io/coderepositorymix
+            name:
+              zh-CN: "代码仓库"
+              en: RepositoryPath
+            description:
+              zh-CN: "选择已为项目分配的代码仓库"
+              en: ""
+        - name: "Branch"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - clone.args.Branch
+            - sonar.args.Branch
+          display:
+            type: alauda.io/codebranch
+            advanced: false
+            name:
+              zh-CN: "分支"
+              en: "Branch"
+            description:
+              zh-CN: "检出代码仓库中的分支"
+              en: "The code repository branch that you want to check out."
+            related: PlatformCodeRepository
+        - name: "RelativeDirectory"
+          schema:
+            type: string
+          required: false
+          value: ""
+          binding:
+            - clone.args.RelativeDirectory
+          default: "."
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "相对目录"
+              en: RelativeDirectory
+            description:
+              zh-CN: "指定检出 Git 仓库的本地目录(相对于 workspace 根目录)。若为空，将使用 workspace 根目录"
+              en: "Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
+    - displayName:
+        zh-CN: "运行时构建"
+        en: "Running Build"
+      items:
+        - name: "UseContinuousCI"
+          schema:
+            type: boolean
+          display:
+            type: boolean
+            name:
+              zh-CN: "开启持续集成"
+              en: "Use Continuous integration"
+            description:
+              zh-CN: "开启后，进行持续集成"
+              en: ""
+          required: false
+          value: "false"
+        - name: "ciImageRepository"
+          schema:
+            type: alauda.io/dockerimagerepositorypullmix
+          binding:
+            - running.args.ciImageRepository
+          required: true
+          value: ""
+          display:
+            type: alauda.io/dockerimagerepositorypullmix
+            name:
+              zh-CN: "镜像仓库"
+              en: Repository
+            description:
+              zh-CN: "选择已为项目分配的镜像仓库或者输入地址"
+              en: ""
+          relation:
+          - action: show
+            when:
+              name: UseContinuousCI
+              value: true
+        - name: "buildCommand"
+          schema:
+            type: string
+          binding:
+            - running.args.buildCommand
+          display:
+            type: code
+            name:
+              zh-CN: "构建命令"
+              en: "Build Command"
+            description:
+              zh-CN: "自定义更详细的构建命令。"
+              en: ""
+          required: false
+          relation:
+            - action: show
+              when:
+                name: UseContinuousCI
+                value: true
+    - displayName:
+        zh-CN: "代码扫描"
+        en: "Code Scanning"
+      items:
+        - name: "UseSonarQube"
+          schema:
+            type: boolean
+          display:
+            type: boolean
+            name:
+              zh-CN: "开启代码扫描"
+              en: "Use code analysis"
+            description:
+              zh-CN: "开启后，进行代码扫描"
+              en: "Whether to use Sonarqube for code scan"
+          required: false
+          value: "false"
+        - name: "CodeQualityBinding"
+          schema:
+            type: alauda.io/toolbinding
+          binding:
+            - sonar.args.CodeQualityBinding
+          required: true
+          value: ""
+          display:
+            type: alauda.io/toolbinding
+            args:
+              bindingKind: codequalitytool
+              bindingToolType: Sonarqube
+            name:
+              zh-CN: "SonarQube 实例"
+              en: "SonarQube instance"
+            description:
+              zh-CN: "选择要使用的 SonarQube 实例"
+              en: "Select a SonarQube instance"
+          relation:
+            - action: show
+              when:
+                name: UseSonarQube
+                value: true
+        - name: "EnableBranchAnalysis"
+          schema:
+            type: boolean
+          required: false
+          binding:
+            - sonar.args.EnableBranchAnalysis
+          value: "false"
+          display:
+            type: boolean
+            advanced: true
+            name:
+              zh-CN: "区分代码分支"
+              en: "Enable branch analysis"
+            description:
+              zh-CN: "扫描主分支以外的分支时，若想查看这些分支的扫描结果，需要在Sonarqube 支持多代码分支的同时，开启此开关"
+              en: "When scanning branches other than the main branch while keeping separate results, the Sonarqube instance needs to support branch analysis and turn on this feature"
+          relation:
+            - action: show
+              when:
+                name: UseSonarQube
+                value: true
+        - name: "AnalysisParameters"
+          schema:
+            type: string
+          required: false
+          binding:
+            - sonar.args.AnalysisParameters
+          value: |
+            sonar.sources=.
+            sonar.sourceEncoding=UTF-8
+          display:
+            type: stringMultiline
+            advanced: false
+            name:
+              zh-CN: "分析参数"
+              en: "Analysis Parameters"
+            description:
+              zh-CN: "为 Sonar Scanner 设置分析参数。当目录中存在 sonar-project.properties 文件时，将会忽略这个参数。详细参数见文档: https://docs.sonarqube.org/latest/analysis/analysis-parameters 和 https://docs.sonarqube.org/display/PLUG/SonarPython"
+              en: "Set analysis parameters for Sonar Scanner. When 'sonar-project.properties' file exists in the code repository, this argument will be omitted. See https://docs.sonarqube.org/latest/analysis/analysis-parameters and https://docs.sonarqube.org/display/PLUG/SonarPython for more details"
+          relation:
+            - action: show
+              when:
+                name: UseSonarQube
+                value: true
+        - name: "FailedIfNotPassQualityGate"
+          schema:
+            type: boolean
+          required: false
+          binding:
+            - sonar.args.FailedIfNotPassQualityGate
+          value: "false"
+          display:
+            type: boolean
+            advanced: true
+            name:
+              zh-CN: "质量阈未通过终止流水线"
+              en: "Fail pipeline when quality gate fails"
+            description:
+              zh-CN: "开启后，代码扫描结果为失败时，流水线执行状态变为失败，终止流水线"
+              en: "Fails pipeline execution when quality gate fails"
+          relation:
+            - action: show
+              when:
+                name: UseSonarQube
+                value: true
+    - displayName:
+        zh-CN: "Docker 构建"
+        en: "Docker Build"
+      items:
+        - name: "imageRepository"
+          schema:
+            type: alauda.io/dockerimagerepositorymix
+          binding:
+            - build-docker.args.imageRepository
+            - deployService.args.imageRepositoryDeploy
+          required: true
+          value: ""
+          display:
+            type: alauda.io/dockerimagerepositorymix
+            name:
+              zh-CN: "镜像仓库"
+              en: Repository
+            description:
+              zh-CN: "选择已为项目分配的镜像仓库或者输入地址"
+              en: ""
+        - name: "context"
+          schema:
+            type: string
+          binding:
+            - build-docker.args.context
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "构建上下文"
+              en: "Build Context"
+            description:
+              zh-CN: "构建过程可以引用上下文中的任何文件。例如，构建中可以使用 COPY 命令在上下文中引用文件"
+              en: "The build process can refer to any of the files in the context. For example, your build can use a COPY instruction to reference a file in the context"
+          required: true
+          value: ""
+          default: '.'
+        - name: "buildArguments"
+          schema:
+            type: string
+          binding:
+            - build-docker.args.buildArguments
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "构建参数"
+              en: "Build Arguments"
+            description:
+              zh-CN: "自定义更多的构建参数，对镜像构建进行更详细的配置"
+              en: ""
+          required: false
+          value: ""
+          default: ''
+        - name: "dockerfile"
+          schema:
+            type: string
+          binding:
+            - build-docker.args.dockerfile
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "Dockerfile"
+              en: "Dockerfile"
+            description:
+              zh-CN: "Dockerfile 在代码仓库中的绝对路径"
+              en: ""
+          required: true
+          value: ""
+          default: 'Dockerfile'
+        - name: "retry"
+          schema:
+            type: string
+          binding:
+            - build-docker.args.retry
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "重试次数"
+              en: "Retry Times"
+            description:
+              zh-CN: "生成镜像时的失败重试次数"
+              en: ""
+          required: false
+          value: ""
+          default: '3'
+          
