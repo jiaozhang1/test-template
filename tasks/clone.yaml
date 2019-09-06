@@ -1,1 +1,125 @@
-a
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTaskTemplate
+metadata:
+  name: alauda-clone
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "Checkout SCM"
+    alauda.io/version: "1.8.2"
+    alauda.io/style.icon: ""
+  labels:
+    category: CI
+spec:
+  engine: gotpl
+  body: |+
+    script {
+      env.FOLDER = "{{.RelativeDirectory}}"?"{{.RelativeDirectory}}":"."
+      env.COMPONENT = "{{.componentName}}"
+
+      {{- if .Library }}
+      library "{{.Library}}"
+      {{- end }}
+
+      dir(env.FOLDER){
+        container('tools') {
+          {{- if .GitProxyCredentials }}
+          env.PROXY_CREDENTIALS_ID = "{{.GitProxyCredentials}}"
+          withCredentials([
+                usernamePassword(credentialsId: env.PROXY_CREDENTIALS_ID, passwordVariable: 'PROXY_ADDRESS', usernameVariable: 'PROXY_ADDRESS_PASS')
+          ]) { 
+            sh script: "git config --global http.proxy ${PROXY_ADDRESS}", returnStatus: true, label: "setting git proxy"
+          }
+          {{- end }}
+          retry(2) { scmVars = checkout scm }
+          release = deploy.release(scmVars)
+
+          env.RELEASE_BUILD = release.version
+          env.RELEASE_VERSION = release.majorVersion
+          // echo "release ${RELEASE_VERSION} - release build ${RELEASE_BUILD}"
+          echo """
+            release ${RELEASE_VERSION}
+            version ${release.version}
+            is_release ${release.is_release}
+            is_build ${release.is_build}
+            is_master ${release.is_master}
+            deploy_env ${release.environment}
+            auto_test ${release.auto_test}
+            environment ${release.environment}
+            majorVersion ${release.majorVersion}
+            release.change ${release.change}
+          """
+          // copying kubectl from tools
+          // sh "cp /usr/local/bin/kubectl ."
+        }
+      }
+    }
+  exports:
+    - name: RELEASE_BUILD
+      description:
+        zh-CN: "构建的版本"
+        en: "Build version"
+    - name: RELEASE_VERSION
+      description:
+        zh-CN: "Major version"
+        en: "Major version"
+    - name: FOLDER
+      description:
+        zh-CN: "相对目录"
+        en: "Relative Directory"
+    - name: COMPONENT
+      description:
+        zh-CN: "组件名字"
+        en: "Component Name"
+  arguments:
+    - name: "Library"
+      schema:
+        type: string
+      required: false
+      default: "alauda-cicd"
+      display:
+        type: string
+        name:
+          zh-CN: "shared library"
+          en: "shared library"
+        description:
+          zh-CN: "shared library"
+          en: "shared library"
+    - name: "RelativeDirectory"
+      schema:
+        type: string
+      required: false
+      default: "."
+      display:
+        type: string
+        name:
+          zh-CN: "相对目录"
+          en: RelativeDirectory
+        description:
+          zh-CN: "指定签出 Git 仓库的本地目录(相对于 workspace 根目录)。若为空，将使用 workspace 根目录"
+          en: "Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
+    - name: "GitProxyCredentials"
+      schema:
+        type: string
+      required: false
+      default: "proxy"
+      display:
+        type: string
+        name:
+          zh-CN: "git代理凭据"
+          en: Git Proxy Credentials
+        description:
+          zh-CN: ""
+          en: ""
+    - name: "componentName"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "componentName"
+          en: "componentName"
+        description:
+          zh-CN: "componentName"
+          en: "componentName"
+      required: true
+      default: ''
