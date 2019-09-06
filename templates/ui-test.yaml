@@ -27,7 +27,7 @@ spec:
       tasks:
         - name: nodejs-build
           kind: ClusterPipelineTaskTemplate
-          type: public/alauda-nodejsBuild
+          type: public/alauda-nodejs-build
   arguments:
     - displayName:
         zh-CN: "代码检出"
