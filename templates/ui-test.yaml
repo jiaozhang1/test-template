@@ -20,12 +20,12 @@ spec:
   stages:
     - name: Clone
       tasks:
-        - name: clone
+        - name: alauda-clone
           kind: PipelineTaskTemplate
           type: public/alauda-clone
     - name: "Nodejs CI"
       tasks:
-        - name: nodejs
+        - name: alauda-nodejs
           kind: PipelineTaskTemplate
           type: public/alauda-nodejs
   arguments:
