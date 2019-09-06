@@ -1,0 +1,94 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTaskTemplate
+metadata:
+  name: alauda-prepare
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "Checkout SCM"
+    alauda.io/version: "2.1.1"
+    alauda.io/style.icon: ""
+  labels:
+    category: Prepare
+spec:
+  engine: gotpl
+  body: |+                
+    script {
+        container('tools') {
+            // checkout code
+            def scmVars
+            retry(2) { scmVars = checkout scm }
+            release = deploy.release(scmVars)
+
+            RELEASE_BUILD = release.version
+            RELEASE_VERSION = release.majorVersion
+            PR_BRANCH = release.version.minus('.').minus('.').toLowerCase()
+            // extract information
+            env.GIT_COMMIT = scmVars."{{.gitcommit}}"
+            env.GIT_BRANCH = scmVars."{{.gitbranch}}"
+
+                        
+            ENV = release.environment
+
+
+            BRANCH_NAME = "master"
+            if (release.change["branch"]){
+                BRANCH_NAME = release.change["branch"].replace("/", "-")
+                CASE_TYPE = release.change["title"].replace(" ", "")
+            } else {
+                CASE_TYPE = "BAT"
+            }
+
+            echo """
+                release ${RELEASE_VERSION}
+                version ${release.version}
+                is_release ${release.is_release}
+                is_build ${release.is_build}
+                is_master ${release.is_master}
+                deploy_env ${release.environment}
+                auto_test ${release.auto_test}
+                environment ${release.environment}
+                majorVersion ${release.majorVersion}
+                git_branch ${GIT_BRANCH}
+                git_commit ${GIT_COMMIT}
+                pr_branch ${PR_BRANCH}
+                case_type ${CASE_TYPE}
+                BRANCH_NAME ${BRANCH_NAME}
+                """
+        }
+    } 
+  exports:
+    - name: GIT_COMMIT
+      description:
+        zh-CN: "GIT提交COMMIT"
+        en: "git commit"
+    - name: GIT_BRANCH
+      description:
+        zh-CN: "分支"
+        en: "git branch"
+  arguments:
+    - name: "CommitID"
+      schema:
+        type: string
+      required: false
+      default: "alauda-cicd"
+      display:
+        type: string
+        name:
+          zh-CN: "shared library"
+          en: "shared library"
+        description:
+          zh-CN: "shared library"
+          en: "shared library"
+    - name: "Branch"
+      schema:
+        type: string
+      required: false
+      default: "."
+      display:
+        type: string
+        name:
+          zh-CN: "分支"
+          en: RelativeDirectory
+        description:
+          zh-CN: "分支"
+          en: "Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
