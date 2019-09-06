@@ -18,6 +18,11 @@ spec:
   agent:
     label: golang-1.12
   stages:
+    - name: Prepare
+      tasks:
+        - name: alauda-prepare
+          kind: PipelineTaskTemplate
+          type: public/alauda-prepare
     - name: Clone
       tasks:
         - name: alauda-clone
