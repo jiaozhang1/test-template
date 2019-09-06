@@ -1,7 +1,7 @@
 apiVersion: devops.alauda.io/v1alpha1
 kind: PipelineTaskTemplate
 metadata:
-  name: alauda-nodejsBuild
+  name: alauda-nodejs-build
   annotations:
     alauda.io/displayName.zh-CN: NodeJS构建
     alauda.io/displayName.en: NodeJS Build
