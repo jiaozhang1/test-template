@@ -21,12 +21,12 @@ spec:
     - name: Clone
       tasks:
         - name: clone
-          kind: ClusterPipelineTaskTemplate
+          kind: PipelineTaskTemplate
           type: public/alauda-clone
     - name: "Nodejs CI"
       tasks:
         - name: nodejs-build
-          kind: ClusterPipelineTaskTemplate
+          kind: PipelineTaskTemplate
           type: public/alauda-nodejs-build
   arguments:
     - displayName:
