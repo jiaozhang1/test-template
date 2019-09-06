@@ -3,11 +3,11 @@ kind: ClusterPipelineTemplate
 metadata:
   name: GeneralBuild
   annotations:
-    alauda.io/displayName.zh-CN: "构建应用"
+    alauda.io/displayName.zh-CN: "构建应用AAA"
     alauda.io/displayName.en: "Build Application"
     alauda.io/description.zh-CN: "克隆代码 -> 构建 -> Docker 构建"
     alauda.io/description.en: "Clone -> Build -> Docker Build"
-    alauda.io/version: "0.1.6"
+    alauda.io/version: "0.1.7"
     alauda.io/style.icon: docker,kubernetes,sonarqube
   labels:
     category: Build
