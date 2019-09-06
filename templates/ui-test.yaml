@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "AlaudaGoBuild"
     alauda.io/description.zh-CN: "ACP 2.X AlaudaGoBuild"
     alauda.io/description.en: "ACP 2.X AlaudaGoBuild"
-    alauda.io/version: "2.1.2"
+    alauda.io/version: "2.1.3"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes
   labels:
     category: Build
@@ -38,14 +38,13 @@ spec:
         zh-CN: "准备"
         en: "prepare"
       items:
-        - name: "PlatformPrepare"
+        - name: "GIT_COMMIT"
           schema:
             type: alauda.io/coderepositorymix
           required: true
           value: ""
           binding:
-            - alauda-checkout-scm.args.PlatformCodeRepository
-            - alauda-git-tag.args.PlatformCodeRepository
+            - alauda-checkout-scm.args.gitcommit
           display:
             type: alauda.io/coderepositorymix
             name:
@@ -54,13 +53,13 @@ spec:
             description:
               zh-CN: "选择已为项目分配的代码仓库"
               en: ""
-        - name: "RelativeDirectory"
+        - name: "GIT_Branch"
           schema:
             type: string
           required: true
           value: ""
           binding:
-            - alauda-checkout-scm.args.RelativeDirectory
+            - alauda-checkout-scm.args.gitbanch
           default: "."
           display:
             type: string
