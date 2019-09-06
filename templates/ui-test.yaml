@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "AlaudaGoBuild"
     alauda.io/description.zh-CN: "ACP 2.X AlaudaGoBuild"
     alauda.io/description.en: "ACP 2.X AlaudaGoBuild"
-    alauda.io/version: "1.8.3"
+    alauda.io/version: "2.1.1"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes
   labels:
     category: Build
@@ -25,9 +25,9 @@ spec:
           type: public/alauda-clone
     - name: "Nodejs CI"
       tasks:
-        - name: nodejs-build
+        - name: nodejs
           kind: PipelineTaskTemplate
-          type: public/alauda-nodejs-build
+          type: public/alauda-nodejs
   arguments:
     - displayName:
         zh-CN: "代码检出"
