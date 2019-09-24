@@ -1,5 +1,5 @@
 apiVersion: devops.alauda.io/v1alpha1
-kind: ClusterPipelineTemplate
+kind: PipelineTemplate
 metadata:
   name: AlaudaAllInOne
   namespace: default
