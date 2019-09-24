@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "AlaudaAll-in-one"
     alauda.io/description.zh-CN: "Alauda ACP 2.X All-in-one"
     alauda.io/description.en: "Alauda ACP 2.X All-in-one"
-    alauda.io/version: "1.8.12"
+    alauda.io/version: "1.8.13"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes
   labels:
     category: Build
@@ -186,7 +186,7 @@ spec:
                 name: UseGoModules
                 value: true
     - displayName:
-        zh-CN: "单元测试与代码扫描"
+        zh-CN: "单元测试"
         en: "Unit Test and Code Scanning"
       items:
         - name: "unitTestCommand"
@@ -219,24 +219,6 @@ spec:
               en: "JUnit report path i.e pkg/**/*.xml"
           required: false
           default: 'pkg/**/*.xml'
-        - name: "CodeQualityBinding"
-          schema:
-            type: alauda.io/toolbinding
-          binding:
-            - alauda-all-in-one.args.CodeQualityBinding
-          required: true
-          value: ""
-          display:
-            type: alauda.io/toolbinding
-            args:
-              bindingKind: codequalitytool
-              bindingToolType: Sonarqube
-            name:
-              zh-CN: "SonarQube 实例"
-              en: "SonarQube instance"
-            description:
-              zh-CN: "选择要使用的 SonarQube 实例"
-              en: "Select a SonarQube instance"
     - displayName:
         zh-CN: "Docker 构建"
         en: "Docker Build"
