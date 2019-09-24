@@ -1,0 +1,417 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTaskTemplate
+metadata:
+  name: alauda-all-in-one
+  annotations:
+    alauda.io/displayName.zh-CN: AllInOneTask
+    alauda.io/displayName.en: AllInOneTask
+    alauda.io/description.zh-CN: AllInOneTask
+    alauda.io/description.en: AllInOneTask
+    alauda.io/readme.zh-CN: AllInOneTask
+    alauda.io/readme.en: AllInOneTask
+    alauda.io/version: "1.8.11"
+    alauda.io/style.icon: ""
+  labels:
+    category: CI
+spec:
+  engine: gotpl
+  body: |+
+    script {
+        {{- if .Library }}
+        library "{{.Library}}"
+        {{- end }}
+
+        {{- define "language" -}}
+        {{- if eq . "golang-1.12" "golang" "golang-1.11" "golang-1.10" -}}
+        {{- print "golang" }}
+        {{- else if eq . "python-2.7" "python-3.6" "python-3.7" "python" -}}
+        {{- print "python" }}
+        {{- else if eq . "java-8" "java" "maven" "openjdk8" -}}
+        {{- print "java" }}
+        {{- else if eq . "nodejs" "nodejs-10" "chromenew" "chrome" -}}
+        {{- print "chrome" }}
+        {{- else }}
+        {{- print "golang" }}
+        {{- end }}
+        {{- end }}
+
+        def language = "{{ template "language" .Agent}}"
+
+        AlaudaPipeline{
+          config = [
+              agent: '{{.Agent}}',
+              folder: '{{.RelativeDirectory}}',
+              {{- if .chartName }}
+              chart: [
+                  chart: "{{.chartName}}",
+                  component: "{{.componentName}}",
+              ],
+              {{- end }}
+              {{- if .PlatformCodeRepository }}
+              scm: [
+                  credentials: '{{ .PlatformCodeRepository.credentialId }}'
+              ],
+              {{- end }}
+              {{- if .imageRepository }}
+              docker: [
+                  repository: "{{ .imageRepository.repositoryPath }}",
+                  credentials: "{{ .imageRepository.credentialId }}",
+                  context: "{{ .dockerContext }}",
+                  dockerfile: "{{ .dockerFile }}",
+              ],
+              {{- end }}
+              {{- if .CodeQualityBinding}}
+              sonar: [
+                  binding: "{{ .CodeQualityBinding.name }}"
+              ],
+              {{- end }}
+          ]
+          env = [
+              {{- if .supportGoModules }}
+              GO111MODULE: "on",
+              {{- else }}
+              GOPATH: "",
+              {{ end }}
+              {{- if .goProxy }}
+              GOPROXY: "{{.goProxy}}",
+              {{- end }}
+          ]
+          {{- if .UseYaml }}
+          yaml = "alauda.yaml"
+          stepsYaml =
+          """
+          steps:
+          {{- if .unitTestCommand }}
+          - name: "Unit test"
+            container: "{{ template "language" .Agent }}"
+            groovy: 
+            - |+
+              try {
+                sh script: """{{ .unitTestCommand }}""", label: "unit tests..."
+              } finally {
+                {{- if .junitTestReport }}
+                junit allowEmptyResults: true, testResults: '{{.junitTestReport}}'
+                {{- else }}
+                echo 'unit tests failed'
+                {{- end }}
+              }
+          {{- end }}
+          {{- if .buildCommand }}
+          - name: "Build"  
+            container: "{{ template "language" .Agent }}"
+            commands:
+            - |+
+              {{.buildCommand }}
+          {{- end }}
+          {{- if .compressCommand }}
+          - name: "Compress"
+            container: "tools"
+            commands:
+            - |+
+              {{.compressCommand }}
+          {{- end }}
+          {{- if .prepareCommand }}
+          - name: "Prepare"
+            container: "tools"
+            commands:
+            - |+
+              {{.prepareCommand }}
+          {{- end }}
+          """
+          {{- else }}
+          steps = [
+              {{- if .unitTestCommand }}
+              [
+                  name: "Unit test",
+                  container: language,
+                  groovy: [
+                    """
+                      try {
+                        sh script: "{{ .unitTestCommand }}", label: "unit tests..."
+                      } finally {
+                        {{- if .junitTestReport }}
+                        junit allowEmptyResults: true, testResults: '{{.junitTestReport}}'
+                        {{- else }}
+                        echo 'unit tests failed'
+                        {{- end }}
+                      }
+                    """
+                  ] 
+              ],
+              {{- end }}
+              {{- if .buildCommand }}
+              [
+                  name: "Build",
+                  container: language,
+                  commands: [
+                    """{{.buildCommand }}""",
+                  ]
+              ],
+              {{- end }}
+              {{- if .compressCommand }}
+              [
+                  name: "Compress",
+                  container: "tools",
+                  commands: [
+                    """{{.compressCommand }}""",
+                  ]
+              ],
+              {{- end }}
+              {{- if .prepareCommand }}
+              [
+                  name: "Prepare",
+                  container: "tools",
+                  commands: [
+                    """{{.prepareCommand }}""",
+                  ]
+              ],
+              {{- end }}
+          ]
+          {{- end}}
+        }
+    }
+  arguments:
+    - name: "Library"
+      schema:
+        type: string
+      required: false
+      default: "alauda-cicd"
+      display:
+        type: string
+        name:
+          zh-CN: "shared library"
+          en: "shared library"
+        description:
+          zh-CN: "shared library"
+          en: "shared library"
+    - name: "RelativeDirectory"
+      schema:
+        type: string
+      required: false
+      default: "."
+      display:
+        type: string
+        name:
+          zh-CN: "相对目录"
+          en: RelativeDirectory
+        description:
+          zh-CN: "指定签出 Git 仓库的本地目录(相对于 workspace 根目录)。若为空，将使用 workspace 根目录"
+          en: "Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
+    - name: "Agent"
+      schema:
+        type: string
+      required: false
+      default: "golang-1.12"
+      display:
+        type: string
+        name:
+          zh-CN: "Jenkins agent"
+          en: Jenkins agent
+        description:
+          zh-CN: "动态Jenkins agent label"
+          en: "动态Jenkins agent label"
+    - name: "UseYaml"
+      schema:
+        type: boolean
+      display:
+        type: boolean
+        name:
+          zh-CN: "使用 YAML 声明构建步骤"
+          en: "Use yaml for build steps"
+        description:
+          zh-CN: "使用 YAML 声明构建步骤"
+          en: "Use yaml for build steps"
+    - name: "GitProxyCredentials"
+      schema:
+        type: string
+      required: false
+      default: "proxy"
+      display:
+        type: string
+        name:
+          zh-CN: "git代理凭据"
+          en: Git Proxy Credentials
+        description:
+          zh-CN: ""
+          en: ""
+    - name: "PlatformCodeRepository"
+      schema:
+        type: alauda.io/coderepositorymix
+      required: true
+      display:
+        type: alauda.io/coderepositorymix
+        name:
+          zh-CN: "代码仓库"
+          en: RepositoryPath
+        description:
+          zh-CN: "选择已为项目分配的代码仓库"
+          en: "Select a code repository for the project."
+    - name: "chartName"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "chartName"
+          en: "chartName"
+        description:
+          zh-CN: "chartName"
+          en: "chartName"
+      required: false
+      default: ''
+    - name: "componentName"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "componentName"
+          en: "componentName"
+        description:
+          zh-CN: "componentName"
+          en: "componentName"
+      required: true
+      default: ''
+    - name: "buildCommand"
+      schema:
+        type: string
+      display:
+        type: code
+        name:
+          zh-CN: "构建命令"
+          en: "Build Command"
+        description:
+          zh-CN: "自定义更详细的构建命令。默认为：go build"
+          en: "build command. Defaults to: go build"
+      required: false
+      default: 'make build'
+    - name: "compressCommand"
+      schema:
+        type: string
+      display:
+        type: code
+        name:
+          zh-CN: "压缩程序命令"
+          en: "Compress Command"
+        description:
+          zh-CN: "自定义更详细的压缩命令"
+          en: "Compress command. Will be executed inside the tools container"
+      required: false
+      default: ''
+    - name: "unitTestCommand"
+      schema:
+        type: string
+      display:
+        type: code
+        name:
+          zh-CN: "单元测试命令"
+          en: "UnitTest command"
+        description:
+          zh-CN: "单元测试命令"
+          en: "UnitTest command"
+      required: false
+      default: ''
+    - name: "junitTestReport"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "JUnit 单元测试报告路径"
+          en: "JUnit report path"
+        description:
+          zh-CN: "JUnit 单元测试报告路径"
+          en: "JUnit report path"
+      required: false
+      default: 'pkg/**/*.xml'
+    - name: "supportGoModules"
+      schema:
+        type: boolean
+      display:
+        type: boolean
+        name:
+          zh-CN: "支持 Go Modules"
+          en: "Support Go Modules"
+        description:
+          zh-CN: "支持 Go Modules"
+          en: "Support Go Modules"
+      required: false
+    - name: "goProxy"
+      schema:
+        type: string
+      display:
+        type: code
+        name:
+          zh-CN: "Go modules 代理"
+          en: "Go modules proxy"
+        description:
+          zh-CN: "Go modules 代理"
+          en: "Go modules proxy"
+      required: false
+      default: 'https://athens.acp.alauda.cn'
+    - name: "CodeQualityBinding"
+      schema:
+        type: alauda.io/toolbinding
+      display:
+        type: alauda.io/toolbinding
+        args:
+          bindingKind: codequalitytool
+          bindingToolType: Sonarqube
+        name:
+          zh-CN: "SonarQube 实例"
+          en: "SonarQube instance"
+        description:
+          zh-CN: "选择要使用的 SonarQube 实例"
+          en: "Select a SonarQube binding"
+      required: false
+    - name: "prepareCommand"
+      schema:
+        type: string
+      display:
+        type: code
+        name:
+          zh-CN: "准备docker build（目录，文件）"
+          en: "Prepare before docker build"
+        description:
+          zh-CN: "准备docker build（目录，文件）"
+          en: "Prepare before docker build"
+      required: false
+      default: ''
+    - name: "imageRepository"
+      schema:
+        type: alauda.io/dockerimagerepositorymix
+      required: true
+      display:
+        type: alauda.io/dockerimagerepositorymix
+        name:
+          zh-CN: "镜像仓库"
+          en: Repository
+        description:
+          zh-CN: "选择或者输入镜像仓库"
+          en: ""
+    - name: "dockerFile"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "Dockerfile"
+          en: "Dockerfile"
+        description:
+          zh-CN: "Dockerfile 在代码仓库中的绝对路径"
+          en: ""
+      required: true
+      default: 'Dockerfile'
+    - name: "dockerContext"
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "构建上下文"
+          en: "Build Context"
+        description:
+          zh-CN: "构建过程可以引用上下文中的任何文件。例如，构建中可以使用 COPY 命令在上下文中引用文件"
+          en: "The build process can refer to any of the files in the context. For example, your build can use a COPY instruction to reference a file in the context"
+      required: false
+      default: '.'
