@@ -1,0 +1,341 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTemplate
+metadata:
+  name: AlaudaAllInOne
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "AlaudaAll-in-one"
+    alauda.io/displayName.en: "AlaudaAll-in-one"
+    alauda.io/description.zh-CN: "Alauda ACP 2.X All-in-one"
+    alauda.io/description.en: "Alauda ACP 2.X All-in-one"
+    alauda.io/version: "1.8.11"
+    alauda.io/style.icon: golang,docker,sonarqube,kubernetes
+  labels:
+    category: Build
+spec:
+  engine: graph
+  withSCM: true
+  agent:
+    label: golang-1.12
+  stages:
+    - name: All
+      tasks:
+        - name: alauda-all-in-one
+          kind: ClusterPipelineTaskTemplate
+          type: public/alauda-all-in-one
+  arguments:
+    - displayName:
+        zh-CN: "基本配置"
+        en: "Basic configuration"
+      items:
+        - name: "Agent"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-all-in-one.args.Agent
+          default: "golang-1.12"
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "Jenkins agent label"
+              en: "Jenkins agent label"
+            description:
+              zh-CN: "Jenkins agent label: golang-1.12 chromenew python-2.7 python-3.6 etc"
+              en: "Jenkins agent label: golang-1.12 chromenew python-2.7 python-3.6 etc"
+        - name: "UseYaml"
+          schema:
+            type: boolean
+          binding:
+            - alauda-all-in-one.args.UseYaml
+          display:
+            type: boolean
+            name:
+              zh-CN: "使用 YAML 声明构建步骤"
+              en: "Use yaml for build steps"
+            description:
+              zh-CN: "使用 YAML 声明构建步骤"
+              en: "Use yaml for build steps"
+          required: false
+          value: "false"
+        - name: "SharedLibrary"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-all-in-one.args.Library
+          default: "alauda-cicd"
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "Jenkins Shared Library"
+              en: "Jenkins Shared Library"
+            description:
+              zh-CN: "Jenkins Shared Library. Add @<branch> at the end of the name for a specific branch"
+              en: "Jenkins Shared Library. Add @<branch> at the end of the name for a specific branch"
+    - displayName:
+        zh-CN: "代码检出"
+        en: "Clone"
+      items:
+        - name: "PlatformCodeRepository"
+          schema:
+            type: alauda.io/coderepositorymix
+          required: true
+          value: ""
+          binding:
+            - alauda-all-in-one.args.PlatformCodeRepository
+          display:
+            type: alauda.io/coderepositorymix
+            name:
+              zh-CN: "代码仓库"
+              en: Code Repository
+            description:
+              zh-CN: "选择已为项目分配的代码仓库"
+              en: ""
+        - name: "RelativeDirectory"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-all-in-one.args.RelativeDirectory
+          default: "."
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "相对目录"
+              en: Relative Directory
+            description:
+              zh-CN: "在 Golang 程序为 GOPATH的子目录，例如 src/github.com/alauda/alauda。指定检出 Git 仓库的本地目录(相对于 workspace 根目录)。若为空，将使用 workspace 根目录"
+              en: "Used as the path in GOPATH, e.g src/github.com/alauda/alauda. Specify a local directory (relative to the workspace root) where the Git repository will be checked out. If left empty, the workspace root itself will be used"
+    - displayName:
+        zh-CN: "构建"
+        en: "Build"
+      items:
+        - name: "buildCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.buildCommand
+          display:
+            type: code
+            name:
+              zh-CN: "构建命令"
+              en: "Build Command"
+            description:
+              zh-CN: "make build"
+              en: ""
+          required: false
+          value: ""
+          default: 'make build'
+        - name: "compressCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.compressCommand
+          display:
+            type: code
+            name:
+              zh-CN: "压缩程序命令"
+              en: "Compress Command"
+            description:
+              zh-CN: "压缩程序命令。例如 upx bin/my-program"
+              en: "Compress Command. i.e upx bin/my-program"
+          required: false
+          default: ''
+        - name: "UseGoModules"
+          schema:
+            type: boolean
+          binding:
+            - alauda-all-in-one.args.supportGoModules
+          display:
+            type: boolean
+            name:
+              zh-CN: "使用 Go Modules"
+              en: "Use Go Modules"
+            description:
+              zh-CN: "使用 Go Modules"
+              en: "Use Go Modules"
+          required: false
+          value: "false"
+        - name: "GoProxy"
+          schema:
+            type: string
+          required: true
+          value: ""
+          binding:
+            - alauda-all-in-one.args.goProxy
+          default: "https://athens.acp.alauda.cn"
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "Go Proxy server"
+              en: "Go Proxy server"
+            description:
+              zh-CN: "Go Proxy server"
+              en: "Go Proxy server"
+          relation:
+            - action: show
+              when:
+                name: UseGoModules
+                value: true
+    - displayName:
+        zh-CN: "单元测试与代码扫描"
+        en: "Unit Test and Code Scanning"
+      items:
+        - name: "unitTestCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.unitTestCommand
+          display:
+            type: code
+            name:
+              zh-CN: "单元测试命令"
+              en: "Unit Test Command"
+            description:
+              zh-CN: "单元测试命令。例如 make test"
+              en: "Unit Test Command. i.e make test"
+          required: false
+          default: ''
+        - name: "junitTestReport"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.junitTestReport
+          display:
+            type: string
+            name:
+              zh-CN: "JUnit单元测试报告路径"
+              en: "JUnit report path"
+            description:
+              zh-CN: "JUnit单元测试报告路径。例如 pkg/**/*.xml"
+              en: "JUnit report path i.e pkg/**/*.xml"
+          required: false
+          default: 'pkg/**/*.xml'
+        - name: "CodeQualityBinding"
+          schema:
+            type: alauda.io/toolbinding
+          binding:
+            - alauda-all-in-one.args.CodeQualityBinding
+          required: true
+          value: ""
+          display:
+            type: alauda.io/toolbinding
+            args:
+              bindingKind: codequalitytool
+              bindingToolType: Sonarqube
+            name:
+              zh-CN: "SonarQube 实例"
+              en: "SonarQube instance"
+            description:
+              zh-CN: "选择要使用的 SonarQube 实例"
+              en: "Select a SonarQube instance"
+    - displayName:
+        zh-CN: "Docker 构建"
+        en: "Docker Build"
+      items:
+        - name: "imageRepository"
+          schema:
+            type: alauda.io/dockerimagerepositorymix
+          binding:
+            - alauda-all-in-one.args.imageRepository
+          required: true
+          value: ""
+          display:
+            type: alauda.io/dockerimagerepositorymix
+            name:
+              zh-CN: "镜像仓库"
+              en: Repository
+            description:
+              zh-CN: "选择已为项目分配的镜像仓库或者输入地址,更新应用时将使用第一个tag进行应用的更新"
+              en: ""
+        - name: "prepareCommand"
+          schema:
+            type: string
+          binding:
+            - alauda-build-docker.args.prepareCommand
+          display:
+            type: code
+            name:
+              zh-CN: "准备构建上下文命令"
+              en: "Prepare build context command"
+            description:
+              zh-CN: "准备构建上下文命令 例如  cp images/Dockerfile bin/Dockerfile"
+              en: "Prepare build context command i.e cp images/Dockerfile bin/Dockerfile"
+          required: false
+          default: ''
+        - name: "context"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.dockerContext
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "构建上下文"
+              en: "Build Context"
+            description:
+              zh-CN: "构建过程可以引用上下文中的任何文件。例如，构建中可以使用 COPY 命令在上下文中引用文件"
+              en: "The build process can refer to any of the files in the context. For example, your build can use a COPY instruction to reference a file in the context"
+          required: true
+          value: ""
+          default: '.'
+        - name: "dockerfile"
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.dockerFile
+          display:
+            type: string
+            advanced: false
+            name:
+              zh-CN: "Dockerfile"
+              en: "Dockerfile"
+            description:
+              zh-CN: "Dockerfile 在代码仓库中的绝对路径"
+              en: ""
+          required: true
+          value: ""
+          default: 'Dockerfile'
+    - displayName:
+        zh-CN: "更新Chart"
+        en: "Update chart"
+      items:
+        - name: chartName
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.chartName
+          display:
+            type: string
+            name:
+              zh-CN: "Chart名称"
+              en: "Chart Name"
+            description:
+              zh-CN: "Chart名称"
+              en: "Chart Name"
+          required: true
+          value: ""
+        - name: componentName
+          schema:
+            type: string
+          binding:
+            - alauda-all-in-one.args.componentName
+          display:
+            type: string
+            name:
+              zh-CN: "组件名称"
+              en: "Component Name"
+            description:
+              zh-CN: "Chart中组件名称"
+              en: "Component Name"
+          required: true
+          value: ""
