@@ -21,7 +21,7 @@ spec:
     - name: All
       tasks:
         - name: alauda-all-in-one
-          kind: ClusterPipelineTaskTemplate
+          kind: PipelineTaskTemplate
           type: public/alauda-all-in-one
   arguments:
     - displayName:
