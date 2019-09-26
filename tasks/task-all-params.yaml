@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.7"
+    alauda.io/version: "0.1.8"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -123,7 +123,7 @@ spec:
           en: "Select a code repository for the project."
     - name: "CodeRepoBranch"
       schema:
-        type: alauda.io/codebranch
+        type: string
       required: true
       display:
         type: alauda.io/codebranch
@@ -133,6 +133,7 @@ spec:
         description:
           zh-CN: "选择已为项目分配的代码仓库分支"
           en: "Select a code repository branch"
+        related: CodeRepoRequired
     - name: "ImageRepositoryRequired"
       schema:
         type: alauda.io/dockerimagerepositorymix
