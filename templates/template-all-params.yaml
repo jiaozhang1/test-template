@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.4"
+    alauda.io/version: "0.1.5"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -214,7 +214,7 @@ spec:
           binding:
             - AllParametersTask.args.Namespace
           schema:
-            type: alauda.io/k8snamespace
+            type: string
           display:
             type: alauda.io/k8snamespace
             name:
@@ -229,7 +229,7 @@ spec:
           binding:
             - AllParametersTask.args.App
           schema:
-            type: alauda.io/applicationName
+            type: string
           display:
             type: alauda.io/applicationName
             name:
@@ -244,7 +244,7 @@ spec:
           binding:
             - AllParametersTask.args.ComponentClass
           schema:
-            type: alauda.io/componentClass
+            type: string
           display:
             type: alauda.io/componentClass
             name:
@@ -258,7 +258,7 @@ spec:
           binding:
             - AllParametersTask.args.Component
           schema:
-            type: alauda.io/componentName
+            type: string
           display:
             type: alauda.io/componentName
             name:
@@ -272,7 +272,7 @@ spec:
           binding:
             - AllParametersTask.args.Container
           schema:
-            type: alauda.io/containerName
+            type: string
           display:
             type: alauda.io/containerName
             name:
