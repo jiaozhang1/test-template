@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.0"
+    alauda.io/version: "0.1.1"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -56,6 +56,11 @@ spec:
             description:
               zh-CN: "带默认值的字符串参数"
               en: "String parameter with default value"
+            relation:
+              - action: show
+                when:
+                  name: Boolean
+                  value: true
         - name: "StringNoDefaultRequired"
           binding:
             - AllParametersTask.args.StringNoDefaultRequired
@@ -201,7 +206,7 @@ spec:
               zh-CN: "集群"
               en: "Cluster"
             description:
-              zh-CN: "集群描述"
+              zh-CN: "集群描述(需要更新的应用所在的集群)"
               en: "Cluster description"
           required: true
         - name: "Namespace"
@@ -217,6 +222,7 @@ spec:
             description:
               zh-CN: "命名空间描述"
               en: "Namespace description"
+            related: Cluster
           required: true
         - name: "App"
           binding:
@@ -231,6 +237,7 @@ spec:
             description:
               zh-CN: "应用 描述"
               en: "App description"
+            related: Namespace
           required: true
         - name: "ComponentClass"
           binding:
