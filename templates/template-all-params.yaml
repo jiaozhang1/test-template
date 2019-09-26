@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.7"
+    alauda.io/version: "0.1.8"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -225,49 +225,6 @@ spec:
               en: "Namespace description"
             related: Cluster
           required: true
-        - name: "App"
-          binding:
-            - AllParametersTask.args.App
-          schema:
-            type: string
-          display:
-            type: alauda.io/applicationName
-            name:
-              zh-CN: "应用"
-              en: "App"
-            description:
-              zh-CN: "应用 描述"
-              en: "App description"
-            related: Namespace
-          required: true
-        - name: "ComponentClass"
-          binding:
-            - AllParametersTask.args.ComponentClass
-          schema:
-            type: string
-          display:
-            type: alauda.io/componentClass
-            name:
-              zh-CN: "组件类型"
-              en: "Component Class"
-            description:
-              zh-CN: "组件类型 描述"
-              en: "Component Class description"
-          required: true
-        - name: "Component"
-          binding:
-            - AllParametersTask.args.Component
-          schema:
-            type: string
-          display:
-            type: alauda.io/componentName
-            name:
-              zh-CN: "组件"
-              en: "Component"
-            description:
-              zh-CN: "组件 描述"
-              en: "Component description"
-          required: true  
         - name: serviceName
           schema:
             type: string
