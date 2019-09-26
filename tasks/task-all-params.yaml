@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.6"
+    alauda.io/version: "0.1.7"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -172,19 +172,19 @@ spec:
           zh-CN: "选择要使用的 SonarQube 实例"
           en: "Select a SonarQube binding"
       required: true
-    - name: "Cluster"
+    - name: clusterName
       schema:
-        type: alauda.io/clustername
+        type: string
       display:
         type: alauda.io/clustername
         name:
           zh-CN: "集群"
-          en: "Cluster"
+          en: "cluster"
         description:
-          zh-CN: "集群描述"
-          en: "Cluster description"
+          zh-CN: "需要更新的应用所在的集群"
+          en: "cluster"
       required: true
-    - name: "namespace"
+    - name: namespace
       schema:
         type: string
       display:
@@ -193,9 +193,9 @@ spec:
           zh-CN: "命名空间"
           en: "namespace"
         description:
-          zh-CN: "命名空间描述"
-          en: "namespace description"
-        related: Cluster
+          zh-CN: "需要更新的应用所在的命名空间"
+          en: "namespace"
+        related: clusterName
       required: true
     - name: serviceName
       schema:
@@ -210,16 +210,66 @@ spec:
           en: "application"
         related: namespace
       required: true
-    - name: "Container"
+    - name: containerName
       schema:
         type: string
       display:
         type: alauda.io/containername
         name:
           zh-CN: "容器"
-          en: "Container"
+          en: "container"
         description:
-          zh-CN: "容器 描述"
-          en: "Container description"
+          zh-CN: "需要更新的容器实例名称"
+          en: "container"
         related: serviceName
+      required: true
+    - name: "imageRepositoryDeploy"
+      schema:
+        type: alauda.io/dockerimagerepositorypullmix
+      required: true
+      display:
+        type: alauda.io/dockerimagerepositorypullmix
+        name:
+          zh-CN: "镜像仓库"
+          en: Repository
+        description:
+          zh-CN: "选择或者输入镜像仓库"
+          en: "image repo"
+    - name: "command"
+      schema:
+        type: string
+      required: false
+      display:
+        type: string
+        advanced: true
+        name:
+          zh-CN: "启动命令"
+          en: "command"
+        description:
+          zh-CN: "即 command，相当于 Dockerfile 中的 ENTRYPOINT 命令。如果没有指定启动命令，将使用容器镜像中的 ENTRYPOINT"
+          en: "command"
+    - name: "args"
+      schema:
+        type: string
+      required: false
+      display:
+        type: string
+        advanced: true
+        name:
+          zh-CN: "参数"
+          en: "args"
+        description:
+          zh-CN: "即 args，相当于 Dockerfile 中的 CMD，负责提供启动命令的命令参数。如果没有指定参数，将使用容器镜像中的 CMD"
+          en: "args"
+    - name: timeout
+      schema:
+        type: string
+      display:
+        type: string
+        name:
+          zh-CN: "超时时间（秒）"
+          en: "Timeout (s)"
+        description:
+          zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
+          en: "timeout"
       required: true
