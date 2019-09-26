@@ -1,0 +1,246 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTaskTemplate
+metadata:
+  name: AllParametersTask
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "All Parameters Name 中文"
+    alauda.io/displayName.en: "All Parameters Name english"
+    alauda.io/description.zh-CN: "All Parameters description 中文"
+    alauda.io/description.en: "All Parameters description english"
+    alauda.io/version: "0.1.0"
+    alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
+  labels:
+    category: All
+spec:
+  engine: gotpl
+  body: |+
+    script {
+        // string
+        echo 'Boolean=={{.Boolean}}'
+        echo 'StringWithDefault=={{.StringWithDefault}}'
+        echo 'StringNoDefaultRequired=={{.StringNoDefaultRequired}}'
+        echo '''CodeWithDefault=={{.CodeWithDefault}}'''
+        if (true) {
+            echo "should break"
+        {{- if .CodeWithDefault }}}    
+        }
+        {{- end }}}
+
+        // code repo
+        echo """CodeRepoRequired=={{.CodeRepoRequired}}"""
+        echo """CodeRepoBranch=={{.CodeRepoBranch}}"""
+
+        // image repo
+        echo """ImageRepositoryRequired=={{.ImageRepositoryRequired}}"""
+        echo """ImageRepositoryPull=={{.ImageRepositoryPull}}"""
+
+        // sonarqube
+        echo """CodeQualityBinding=={{.CodeQualityBinding}}"""
+
+        // cluster
+        echo """Cluster=={{.Cluster}}"""
+        echo """Namespace=={{.Namespace}}"""
+        echo """App=={{.App}}"""
+        echo """ComponentClass=={{.ComponentClass}}"""
+        echo """Component=={{.Component}}"""
+        echo """Container=={{.Container}}"""
+    }
+  arguments:
+    - name: "Boolean"
+      schema:
+        type: boolean
+      display:
+        type: boolean
+        name:
+          zh-CN: "布尔"
+          en: "Boolean"
+        description:
+          zh-CN: "布尔 描述"
+          en: "boolean description"
+    - name: "StringWithDefault"
+      schema:
+        type: string
+      required: false
+      default: "has a value"
+      display:
+        type: string
+        name:
+          zh-CN: "默认值的字符串"
+          en: "String with default"
+        description:
+          zh-CN: "带默认值的字符串参数"
+          en: "String parameter with default value"
+    - name: "StringNoDefaultRequired"
+      schema:
+        type: string
+      required: true
+      display:
+        type: string
+        name:
+          zh-CN: "必填没有默认值的字符串"
+          en: "Compulsory string without default"
+        description:
+          zh-CN: "必填没有默认值的字符串描述"
+          en: "Compulsory string without default description"
+    - name: "CodeWithDefault"
+      schema:
+        type: string
+      required: false
+      default: "has a value"
+      display:
+        type: code
+        name:
+          zh-CN: "默认值的代码"
+          en: "code with default"
+        description:
+          zh-CN: "带默认值的代码参数. 如果不填值这个模版会渲染失败"
+          en: "Code parameter with default value"
+    - name: "CodeNoDefaultRequired"
+      schema:
+        type: string
+      required: true
+      display:
+        type: code
+        name:
+          zh-CN: "必填没有默认值的代码"
+          en: "Compulsory code without default"
+        description:
+          zh-CN: "必填没有默认值的代码描述"
+          en: "Compulsory code without default description"
+
+    - name: "CodeRepoRequired"
+      schema:
+        type: alauda.io/coderepositorymix
+      required: true
+      display:
+        type: alauda.io/coderepositorymix
+        name:
+          zh-CN: "代码仓库"
+          en: "Code Repository"
+        description:
+          zh-CN: "选择已为项目分配的代码仓库"
+          en: "Select a code repository for the project."
+    - name: "CodeRepoBranch"
+      schema:
+        type: alauda.io/codebranch
+      required: true
+      display:
+        type: alauda.io/codebranch
+        name:
+          zh-CN: "代码仓库分支"
+          en: "Code Repository branch"
+        description:
+          zh-CN: "选择已为项目分配的代码仓库分支"
+          en: "Select a code repository branch"
+    - name: "ImageRepositoryRequired"
+      schema:
+        type: alauda.io/dockerimagerepositorymix
+      required: true
+      display:
+        type: alauda.io/dockerimagerepositorymix
+        name:
+          zh-CN: "镜像仓库"
+          en: Repository
+        description:
+          zh-CN: "选择或者输入镜像仓库"
+          en: "Image repo description"
+    - name: "ImageRepositoryPull"
+      schema:
+        type: alauda.io/dockerimagerepositorypullmix
+      required: false
+      display:
+        type: alauda.io/dockerimagerepositorypullmix
+        name:
+          zh-CN: "pull镜像仓库"
+          en: Repository pull
+        description:
+          zh-CN: "pull 选择或者输入镜像仓库"
+          en: "pull Image repo description"
+    - name: "CodeQualityBinding"
+      schema:
+        type: alauda.io/toolbinding
+      display:
+        type: alauda.io/toolbinding
+        args:
+          bindingKind: codequalitytool
+          bindingToolType: Sonarqube
+        name:
+          zh-CN: "SonarQube 实例"
+          en: "SonarQube instance"
+        description:
+          zh-CN: "选择要使用的 SonarQube 实例"
+          en: "Select a SonarQube binding"
+      required: true
+    - name: "Cluster"
+      schema:
+        type: alauda.io/clustername
+      display:
+        type: alauda.io/clustername
+        name:
+          zh-CN: "集群"
+          en: "Cluster"
+        description:
+          zh-CN: "集群描述"
+          en: "Cluster description"
+      required: true
+    - name: "Namespace"
+      schema:
+        type: alauda.io/k8snamespace
+      display:
+        type: alauda.io/k8snamespace
+        name:
+          zh-CN: "命名空间"
+          en: "Namespace"
+        description:
+          zh-CN: "命名空间描述"
+          en: "Namespace description"
+      required: true
+    - name: "App"
+      schema:
+        type: alauda.io/applicationName
+      display:
+        type: alauda.io/applicationName
+        name:
+          zh-CN: "应用"
+          en: "App"
+        description:
+          zh-CN: "应用 描述"
+          en: "App description"
+      required: true
+    - name: "ComponentClass"
+      schema:
+        type: alauda.io/componentClass
+      display:
+        type: alauda.io/componentClass
+        name:
+          zh-CN: "组件类型"
+          en: "Component Class"
+        description:
+          zh-CN: "组件类型 描述"
+          en: "Component Class description"
+      required: true
+    - name: "Component"
+      schema:
+        type: alauda.io/componentName
+      display:
+        type: alauda.io/componentName
+        name:
+          zh-CN: "组件"
+          en: "Component"
+        description:
+          zh-CN: "组件 描述"
+          en: "Component description"
+      required: true
+    - name: "Container"
+      schema:
+        type: alauda.io/containerName
+      display:
+        type: alauda.io/containerName
+        name:
+          zh-CN: "容器"
+          en: "Container"
+        description:
+          zh-CN: "容器 描述"
+          en: "Container description"
+      required: true
