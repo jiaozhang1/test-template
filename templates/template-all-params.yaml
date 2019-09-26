@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.10"
+    alauda.io/version: "0.1.11"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -129,7 +129,7 @@ spec:
           binding:
             - AllParametersTask.args.CodeRepoBranch
           schema:
-            type: alauda.io/codebranch
+            type: string
           required: true
           display:
             type: alauda.io/codebranch
@@ -139,6 +139,7 @@ spec:
             description:
               zh-CN: "选择已为项目分配的代码仓库分支"
               en: "Select a code repository branch"
+            related: CodeRepoRequired
     - displayName:
         zh-CN: "镜像仓库"
         en: "Image Repository"
