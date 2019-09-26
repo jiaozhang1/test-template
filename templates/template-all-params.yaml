@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.9"
+    alauda.io/version: "0.1.10"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -196,35 +196,37 @@ spec:
         zh-CN: "集群与应用"
         en: "Cluster App"
       items:
-        - name: "Cluster"
-          binding:
-            - AllParametersTask.args.Cluster
+        - name: clusterName
           schema:
-            type: alauda.io/clustername
+            type: string
+          binding:
+          - AllParametersTask.args.clusterName
           display:
             type: alauda.io/clustername
             name:
               zh-CN: "集群"
-              en: "Cluster"
+              en: "cluster"
             description:
-              zh-CN: "集群描述(需要更新的应用所在的集群)"
-              en: "Cluster description"
+              zh-CN: "需要更新的应用所在的集群"
+              en: "cluster"
           required: true
-        - name: "namespace"
-          binding:
-            - AllParametersTask.args.namespace
+          value: ""
+        - name: namespace
           schema:
             type: string
+          binding:
+          - AllParametersTask.args.namespace
           display:
             type: alauda.io/namespace
             name:
               zh-CN: "命名空间"
               en: "namespace"
             description:
-              zh-CN: "命名空间描述"
-              en: "namespace description"
-            related: Cluster
+              zh-CN: "需要更新的应用所在的命名空间"
+              en: "namespace"
+            related: clusterName
           required: true
+          value: ""
         - name: serviceName
           schema:
             type: string
@@ -241,18 +243,67 @@ spec:
             related: namespace
           required: true
           value: ""
-        - name: "Container"
-          binding:
-            - AllParametersTask.args.Container
+        - name: containerName
           schema:
             type: string
+          binding:
+            - AllParametersTask.args.containerName
           display:
             type: alauda.io/containername
             name:
               zh-CN: "容器"
-              en: "Container"
+              en: "container"
             description:
-              zh-CN: "容器 描述"
-              en: "Container description"
+              zh-CN: "需要更新的容器实例名称"
+              en: "container"
             related: serviceName
           required: true
+          value: ""
+        - name: "command"
+          schema:
+            type: string
+          required: false
+          binding:
+          - AllParametersTask.args.command
+          value: ""
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "启动命令"
+              en: "command"
+            description:
+              zh-CN: "即 command，相当于 Dockerfile 中的 ENTRYPOINT 命令。如果没有指定启动命令，将使用容器镜像中的 ENTRYPOINT"
+              en: "command"
+        - name: "args"
+          schema:
+            type: string
+          required: false
+          binding:
+          - AllParametersTask.args.args
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "参数"
+              en: "args"
+            description:
+              zh-CN: "即 args，相当于 Dockerfile 中的 CMD，负责提供启动命令的命令参数。如果没有指定参数，将使用容器镜像中的 CMD"
+              en: "args"
+        - name: timeout
+          schema:
+            type: string
+          binding:
+            - AllParametersTask.args.timeout
+          display:
+            type: string
+            advanced: true
+            name:
+              zh-CN: "超时时间（秒）"
+              en: "Timeout (s)"
+            description:
+              zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
+              en: ""
+          required: true
+          default: '300'
+          value: ""
