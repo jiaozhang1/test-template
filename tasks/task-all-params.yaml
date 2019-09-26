@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.0"
+    alauda.io/version: "0.1.1"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -195,6 +195,7 @@ spec:
         description:
           zh-CN: "命名空间描述"
           en: "Namespace description"
+        related: Cluster
       required: true
     - name: "App"
       schema:
@@ -207,6 +208,7 @@ spec:
         description:
           zh-CN: "应用 描述"
           en: "App description"
+        related: Namespace
       required: true
     - name: "ComponentClass"
       schema:
