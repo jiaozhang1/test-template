@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.8"
+    alauda.io/version: "0.1.9"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -210,19 +210,19 @@ spec:
               zh-CN: "集群描述(需要更新的应用所在的集群)"
               en: "Cluster description"
           required: true
-        - name: "Namespace"
+        - name: "namespace"
           binding:
-            - AllParametersTask.args.Namespace
+            - AllParametersTask.args.namespace
           schema:
             type: string
           display:
             type: alauda.io/namespace
             name:
               zh-CN: "命名空间"
-              en: "Namespace"
+              en: "namespace"
             description:
               zh-CN: "命名空间描述"
-              en: "Namespace description"
+              en: "namespace description"
             related: Cluster
           required: true
         - name: serviceName
@@ -238,7 +238,7 @@ spec:
             description:
               zh-CN: "需要更新的应用名称、组件类型、组件名称"
               en: "application"
-            related: Namespace
+            related: namespace
           required: true
           value: ""
         - name: "Container"
