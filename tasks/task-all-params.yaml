@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.3"
+    alauda.io/version: "0.1.4"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -233,6 +233,19 @@ spec:
         description:
           zh-CN: "组件 描述"
           en: "Component description"
+      required: true
+    - name: serviceName
+      schema:
+        type: string
+      display:
+        type: alauda.io/servicenamemix
+        name:
+          zh-CN: "应用"
+          en: "application"
+        description:
+          zh-CN: "需要更新的应用名称、组件类型、组件名称"
+          en: "application"
+        related: namespace
       required: true
     - name: "Container"
       schema:
