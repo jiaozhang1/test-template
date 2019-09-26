@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.5"
+    alauda.io/version: "0.1.6"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -216,7 +216,7 @@ spec:
           schema:
             type: string
           display:
-            type: alauda.io/k8snamespace
+            type: alauda.io/namespace
             name:
               zh-CN: "命名空间"
               en: "Namespace"
@@ -274,7 +274,7 @@ spec:
           schema:
             type: string
           display:
-            type: alauda.io/containerName
+            type: alauda.io/containername
             name:
               zh-CN: "容器"
               en: "Container"
