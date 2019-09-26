@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.1"
+    alauda.io/version: "0.1.2"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -186,7 +186,7 @@ spec:
       required: true
     - name: "Namespace"
       schema:
-        type: alauda.io/k8snamespace
+        type: string
       display:
         type: alauda.io/k8snamespace
         name:
@@ -199,7 +199,7 @@ spec:
       required: true
     - name: "App"
       schema:
-        type: alauda.io/applicationName
+        type: string
       display:
         type: alauda.io/applicationName
         name:
@@ -212,7 +212,7 @@ spec:
       required: true
     - name: "ComponentClass"
       schema:
-        type: alauda.io/componentClass
+        type: string
       display:
         type: alauda.io/componentClass
         name:
@@ -224,7 +224,7 @@ spec:
       required: true
     - name: "Component"
       schema:
-        type: alauda.io/componentName
+        type: string
       display:
         type: alauda.io/componentName
         name:
@@ -236,7 +236,7 @@ spec:
       required: true
     - name: "Container"
       schema:
-        type: alauda.io/containerName
+        type: string
       display:
         type: alauda.io/containerName
         name:
