@@ -48,7 +48,7 @@ spec:
           schema:
             type: string
           required: false
-          default: "has a value"
+          default: "has a value template"
           display:
             type: string
             name:
