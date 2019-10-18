@@ -307,4 +307,22 @@ spec:
               en: ""
           required: true
           default: '300'
-          value: ""
+          value: true
+    - displayName:
+        zh-CN: "其他"
+        en: "Others"
+      items:
+        - name: "imageRepositoryDeploy"
+          binding:
+            - AllParametersTask.args.imageRepositoryDeploy
+          schema:
+            type: string
+          required: true
+          display:
+            type: alauda.io/dockerimagerepositorypullmix
+            name:
+              zh-CN: "镜像仓库"
+              en: Repository
+            description:
+              zh-CN: "选择或者输入镜像仓库"
+              en: "image repo"
