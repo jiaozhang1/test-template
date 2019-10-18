@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.16"
+    alauda.io/version: "0.1.17"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -306,7 +306,6 @@ spec:
               zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
               en: ""    
           required: true
-          default: '520'
     - displayName:
         zh-CN: "其他"
         en: "Others"
