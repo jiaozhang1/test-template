@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.11"
+    alauda.io/version: "0.1.12"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
