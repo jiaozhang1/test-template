@@ -41,6 +41,7 @@ spec:
             description:
               zh-CN: "布尔 描述"
               en: "boolean description"
+            required: false
             value: false
         - name: "StringWithDefault"
           binding:
