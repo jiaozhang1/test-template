@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.18"
+    alauda.io/version: "0.1.19"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -310,7 +310,22 @@ spec:
     - displayName:
         zh-CN: "其他"
         en: "Others"
-      items:
+      items:      
+        - name: "TrueBoolean"
+          binding:
+            - AllParametersTask.args.TrueBoolean
+          schema:
+            type: boolean
+          display:
+            type: boolean
+            name:
+              zh-CN: "布尔"
+              en: "Boolean"
+            description:
+              zh-CN: "布尔 描述"
+              en: "boolean description"
+            required: true
+            value: true
         - name: "imageRepositoryDeploy"
           binding:
             - AllParametersTask.args.imageRepositoryDeploy
@@ -325,3 +340,8 @@ spec:
             description:
               zh-CN: "选择或者输入镜像仓库"
               en: "image repo"
+          relation:
+            - action: show
+              when:
+                name: TrueBoolean
+                value: true
