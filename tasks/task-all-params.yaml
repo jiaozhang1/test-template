@@ -261,4 +261,16 @@ spec:
         description:
           zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
           en: "timeout"
+      required: true 
+    - name: "imageRepositoryDeploy"
+      schema:
+        type: alauda.io/dockerimagerepositorypullmix
       required: true
+      display:
+        type: alauda.io/dockerimagerepositorypullmix
+        name:
+          zh-CN: "镜像仓库"
+          en: Repository
+        description:
+          zh-CN: "选择或者输入镜像仓库"
+          en: "image repo" 
