@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.9"
+    alauda.io/version: "0.1.10"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -262,6 +262,7 @@ spec:
           zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
           en: "timeout"
       required: true 
+      default: '2500'
     - name: "imageRepositoryDeploy"
       schema:
         type: alauda.io/dockerimagerepositorypullmix
