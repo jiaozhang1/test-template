@@ -305,9 +305,8 @@ spec:
             description:
               zh-CN: "当前任务的执行时间若超过超时时间，则会中止任务，流水线变为失败状态"
               en: ""
-          required: true
+          required: false
           default: '300'
-          value: true
     - displayName:
         zh-CN: "其他"
         en: "Others"
