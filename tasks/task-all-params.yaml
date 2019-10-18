@@ -62,7 +62,7 @@ spec:
       schema:
         type: string
       required: false
-      default: "has a value"
+      default: "has a value task"
       display:
         type: string
         name:
@@ -224,18 +224,6 @@ spec:
           en: "container"
         related: serviceName
       required: true
-    - name: "imageRepositoryDeploy"
-      schema:
-        type: alauda.io/dockerimagerepositorypullmix
-      required: true
-      display:
-        type: alauda.io/dockerimagerepositorypullmix
-        name:
-          zh-CN: "镜像仓库"
-          en: Repository
-        description:
-          zh-CN: "选择或者输入镜像仓库"
-          en: "image repo"
     - name: "command"
       schema:
         type: string
