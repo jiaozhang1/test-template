@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.20"
+    alauda.io/version: "0.1.21"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -42,7 +42,7 @@ spec:
               zh-CN: "布尔 描述"
               en: "boolean description"
             required: false
-            value: "false"
+          value: "false"
         - name: "StringWithDefault"
           binding:
             - AllParametersTask.args.StringWithDefault
@@ -325,7 +325,7 @@ spec:
               zh-CN: "布尔 描述"
               en: "boolean description"
             required: true
-            value: "true"
+          value: "true"
         - name: "imageRepositoryDeploy"
           binding:
             - AllParametersTask.args.imageRepositoryDeploy
