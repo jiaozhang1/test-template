@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.24"
+    alauda.io/version: "0.1.26"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -119,6 +119,7 @@ spec:
             type: alauda.io/coderepositorymix
           required: true
           display:
+            args: 
             type: alauda.io/coderepositorymix
             name:
               zh-CN: "代码仓库"
@@ -308,7 +309,7 @@ spec:
               en: ""    
           required: true
     - displayName:
-        zh-CN: "其他"
+        zh-CN: "高级..."
         en: "Others"
       items:      
         - name: "TrueBoolean"
@@ -319,11 +320,11 @@ spec:
           display:
             type: boolean
             name:
-              zh-CN: "布尔"
-              en: "Boolean"
+              zh-CN: "是否开启构建"
+              en: "Open or not"
             description:
-              zh-CN: "布尔 描述"
-              en: "boolean description"
+              zh-CN: "描述描述描述！！！！！描述描述描述！！！！！描述描述描述！！！！！描述描述描述！！！！！aaannn"
+              en: "boolean description!boolean description!boolean description!boolean description!boolean description!boolean description!"
           required: true
           value: "true"
         - name: "imageRepositoryDeploy"
