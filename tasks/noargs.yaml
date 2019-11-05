@@ -1,0 +1,15 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTaskTemplate
+metadata:
+  name: noargs
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "No Args Template"
+    alauda.io/version: "2.0"
+    alauda.io/style.icon: ""
+  labels:
+    category: CI
+spec:
+  engine: gotpl
+  body: |+
+    echo "this is no args task template"
