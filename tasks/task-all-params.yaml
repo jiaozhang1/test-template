@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All Parameters Name english"
     alauda.io/description.zh-CN: "All Parameters description 中文"
     alauda.io/description.en: "All Parameters description english"
-    alauda.io/version: "0.1.12"
+    alauda.io/version: "0.1.13"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -40,6 +40,11 @@ spec:
         echo """ComponentClass=={{.ComponentClass}}"""
         echo """Component=={{.Component}}"""
         echo """Container=={{.Container}}"""
+
+        // select and suggestions
+        echo """select == {{.select}}"""
+        echo """selectWithAlias == {{.selectWithAlias}}"""
+        echo """suggestions == {{.suggestions}}"""
     }
   arguments:
     - name: "Boolean"
@@ -281,3 +286,58 @@ spec:
         description:
           zh-CN: "选择或者输入镜像仓库"
           en: "image repo" 
+    - name: "select"
+      schema:
+        type: string
+        enum:
+        - "bug"
+        - "req"
+        - "imp"
+      required: false
+      default: "bug"
+      display:
+        type: select
+        name:
+          zh-CN: "下拉框"
+          en: Select
+        description:
+          zh-CN: "普通下拉框"
+          en: "select"
+    - name: "selectWithAlias"
+      schema:
+        type: string
+        enum:
+        - "bug"
+        - "req"
+        - "imp"
+      required: true
+      default: "req"
+      display:
+        type: select
+        name:
+          zh-CN: "下拉框含有Alias"
+          en: SelectWithAlias
+        description:
+          zh-CN: "普通下拉框含有alias"
+          en: "select with alias" 
+        enumAlias:
+        - "缺陷"
+        - "需求"
+        - "优化"
+    - name: "suggestions"
+      schema:
+        type: string
+      required: true
+      default: "需求"
+      display:
+        type: string
+        name:
+          zh-CN: "含辅助项输入"
+          en: input
+        description:
+          zh-CN: "含辅助项输入"
+          en: "input" 
+        suggestions:
+        - "缺陷"
+        - "需求"
+        - "优化"
