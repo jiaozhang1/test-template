@@ -1,0 +1,24 @@
+apiVersion: devops.alauda.io/v1alpha1
+kind: PipelineTemplate
+metadata:
+  name: NoArgsTemplate
+  namespace: default
+  annotations:
+    alauda.io/displayName.zh-CN: "NoArgsTemplate"
+    alauda.io/displayName.en: "NoArgsTemplate"
+    alauda.io/description.zh-CN: "NoArgsTemplate"
+    alauda.io/description.en: "NoArgsTemplate"
+    alauda.io/version: "2.0"
+    alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
+  labels:
+    category: All
+spec:
+  engine: graph
+  withSCM: true
+  agent:
+    label: base
+  stages:
+    - name: NoArgs
+      tasks:
+        - name: noargs
+          kind: PipelineTaskTemplate
