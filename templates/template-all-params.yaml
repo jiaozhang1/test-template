@@ -8,7 +8,7 @@ metadata:
     alauda.io/displayName.en: "All params temp english"
     alauda.io/description.zh-CN: "All params temp 中文描述"
     alauda.io/description.en: "All params temp english description"
-    alauda.io/version: "0.1.26"
+    alauda.io/version: "0.1.28"
     alauda.io/style.icon: golang,docker,sonarqube,kubernetes,python,nodejs
   labels:
     category: All
@@ -108,6 +108,67 @@ spec:
             description:
               zh-CN: "必填没有默认值的代码描述"
               en: "Compulsory code without default description"
+        - name: "select"
+          schema:
+            type: string
+            enum:
+            - "bug"
+            - "req"
+            - "imp"
+          binding:
+            - AllParametersTask.args.select
+          required: false
+          default: "bug"
+          display:
+            type: select
+            name:
+              zh-CN: "下拉框"
+              en: Select
+            description:
+              zh-CN: "普通下拉框"
+              en: "select"
+        - name: "selectWithAlias"
+          schema:
+            type: string
+            enum:
+            - "bug"
+            - "req"
+            - "imp"
+          binding:
+            - AllParametersTask.args.selectWithAlias
+          required: true
+          default: "req"
+          display:
+            type: select
+            name:
+              zh-CN: "下拉框含有Alias"
+              en: SelectWithAlias
+            description:
+              zh-CN: "普通下拉框含有alias"
+              en: "select with alias" 
+            enumAlias:
+            - "缺陷"
+            - "需求"
+            - "优化"
+        - name: "suggestions"
+          schema:
+            type: string
+          binding:
+            - AllParametersTask.args.suggestions
+          required: true
+          default: "需求"
+          display:
+            type: string
+            name:
+              zh-CN: "含辅助项输入"
+              en: input
+            description:
+              zh-CN: "含辅助项输入"
+              en: "input" 
+            suggestions:
+            - "缺陷"
+            - "需求"
+            - "优化"
     - displayName:
         zh-CN: "代码仓库"
         en: "Code Repository"
